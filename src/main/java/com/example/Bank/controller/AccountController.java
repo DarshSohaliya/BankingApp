@@ -21,7 +21,7 @@ public class AccountController {
         accountService.createAc(account);
     }
 
-    @PostMapping("/withdrow")
+    @PutMapping("/withdrow")
 
     public String WithDrow(@RequestBody AccountUser accountUser){
 
@@ -42,7 +42,7 @@ public class AccountController {
     }
 
 
-    @PostMapping("/deposite")
+    @PutMapping("/deposite")
 
     public String Deposite(@RequestBody AccountUser accountUser){
        try{
@@ -61,7 +61,7 @@ public class AccountController {
        }
     }
 
-    @PostMapping("/transaction")
+    @PutMapping("/transaction")
     public String Transfer(@RequestBody TransactionDTO transactionDTO){
        try{
            boolean isTransaction = accountService.Transfer(transactionDTO.getSenderAcNo(),transactionDTO.getRecieverAcNo(),transactionDTO.getAmount());
@@ -78,7 +78,7 @@ public class AccountController {
        }
     }
 
-    @PostMapping("/acdetail")
+    @GetMapping("/acdetail")
 
     public Account AcDetail(@RequestHeader long acNo){
         return accountService.AccountDetail(acNo);

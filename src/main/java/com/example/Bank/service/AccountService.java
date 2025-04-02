@@ -12,6 +12,7 @@ import javax.xml.crypto.Data;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -24,19 +25,27 @@ public class AccountService {
     TransactionRepository transactionRepository;
 
     public void createAc(Account account){
-        System.out.println(account.getBalance() + account.getName());
-          account.setBalance(account.getBalance());
-         long acNo = generateAcNo();
-        account.setAcNo(acNo);
-        accountRepository.save(account);
+        boolean isCreated = false;
+        while(!isCreated) {
+            try {
+                long acNo = generateAcNo();
+                account.setAcNo(acNo);
+                accountRepository.save(account);
+                isCreated=true;
+            } catch (Exception e) {
+                System.out.println("AccountNo is already exist");
+            }
+
+
+        }
     }
 
     public Long  generateAcNo(){
         long acNo;
          final Random random = new Random();
-        do {
+
             acNo = 1_000_000_000L + (long)(random.nextDouble() * 9_000_000_000L);
-        } while (accountRepository.findByAcNo(acNo) != null); // DB check for uniqueness
+
 
         return acNo;
     }
@@ -83,18 +92,27 @@ public class AccountService {
 
     public boolean Transfer(long senderAcNo,long recieverAcNo,double amount){
 
+        System.out.println("Sender Account11: " + senderAcNo);
+        System.out.println("Receiver Account22: " + recieverAcNo);
 
         Account sender = accountRepository.findByAcNo(senderAcNo);
         Account reciever = accountRepository.findByAcNo(recieverAcNo);
-     System.out.println(senderAcNo + "::::" +  recieverAcNo);
+
+        System.out.println("Sender Account: " + sender);
+        System.out.println("Receiver Account: " + reciever);
+
         if(sender == null || reciever == null){
             throw  new RuntimeException("Account not found");
         }
 
         sender.setBalance(sender.getBalance() - amount);
         reciever.setBalance(reciever.getBalance() + amount);
-        accountRepository.save(sender);
-        accountRepository.save(reciever);
+
+        List<Account> accounts = List.of(sender, reciever);
+        System.out.println(accounts);
+
+        accountRepository.saveAll(accounts);
+
 
        createStatement(senderAcNo,"Transfer",amount);
        createStatement(recieverAcNo,"Transfer",amount);
