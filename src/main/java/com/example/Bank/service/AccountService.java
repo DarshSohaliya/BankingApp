@@ -26,17 +26,16 @@ public class AccountService {
 
     public void createAc(Account account){
         boolean isCreated = false;
+
         while(!isCreated) {
             try {
                 long acNo = generateAcNo();
                 account.setAcNo(acNo);
                 accountRepository.save(account);
-                isCreated=true;
+                isCreated = true;
             } catch (Exception e) {
                 System.out.println("AccountNo is already exist");
             }
-
-
         }
     }
 
